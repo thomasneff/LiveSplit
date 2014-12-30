@@ -76,13 +76,15 @@ namespace LiveSplit.UI.Components
         /// Returns the XML serialization of the component's settings.
         /// </summary>
         /// <param name="document">The XML document.</param>
-        /// <returns> Returns the XML serialization of the component's settings.</returns>
+        /// <returns>Returns the XML serialization of the component's settings.</returns>
         XmlNode GetSettings(XmlDocument document);
         /// <summary>
         /// Sets the settings of the component based on the serialized version of the settings.
         /// </summary>
         /// <param name="settings">A serialized version of the settings that need to be set.</param>
         void SetSettings(XmlNode settings);
+
+        Control GetConfigurationControl();
 
         /// <summary>
         /// Updates the component, checks if it has changed, and invalidates the necessary region if it needs to be redrawn.
