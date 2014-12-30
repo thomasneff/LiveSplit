@@ -1,4 +1,6 @@
 ﻿using LiveSplit.Model.Comparisons;
+using LiveSplit.Model.Configurations;
+using LiveSplit.UI.Components;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -21,6 +23,8 @@ namespace LiveSplit.Model
         IList<IComparisonGenerator> ComparisonGenerators { get; set; }
         IList<string> CustomComparisons { get; set; }
         IEnumerable<string> Comparisons { get; }
+
+        IDictionary<string, IList<IConfiguration>> Configurations { get; set; }
 
         bool HasChanged { get; set; }
         string FilePath { get; set; }
