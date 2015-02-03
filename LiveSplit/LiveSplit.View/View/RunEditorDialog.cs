@@ -1,4 +1,5 @@
 ﻿using LiveSplit.Model;
+using LiveSplit.Model.RunImporters;
 using LiveSplit.Options;
 using LiveSplit.TimeFormatters;
 using LiveSplit.UI;
@@ -1206,6 +1207,36 @@ namespace LiveSplit.View
                     Fix();
                 }
             }
+        }
+
+        private void btnImportComparison_Click(object sender, EventArgs e)
+        {
+            ImportComparisonMenu.Show(MousePosition);
+        }
+
+        private void fromFileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var runImporter = new FileRunImporter();
+            ImportClick(runImporter);
+        }
+
+        private void fromURLToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var runImporter = new URLRunImporter();
+            ImportClick(runImporter);
+        }
+
+        private void fromSplitsioToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var runImporter = new SplitsIORunImporter();
+            ImportClick(runImporter);
+        }
+
+        private void ImportClick(IRunImporter importer)
+        {
+            var name = importer.ImportAsComparison(CurrentState.Run, this);
+            if (name != null)
+                AddComparisonColumn(name);
         }
     }
 }

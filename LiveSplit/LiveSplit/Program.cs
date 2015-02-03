@@ -1,4 +1,5 @@
-﻿using LiveSplit.View;
+﻿using LiveSplit.Options;
+using LiveSplit.View;
 using LiveSplit.Web.Share;
 using System;
 using System.IO;
@@ -35,8 +36,8 @@ namespace LiveSplit
                         layoutPath = args[++i];
                 }
                 Application.Run(new TimerForm(splitsPath: splitsPath, layoutPath: layoutPath));
-                if (Twitch.Instance != null && Twitch.Instance.Chat != null)
-                    Twitch.Instance.Chat.Close();
+                if (Twitch.Instance != null)
+                    Twitch.Instance.CloseAllChatConnections();
             }
 #if !DEBUG
             catch (Exception e)

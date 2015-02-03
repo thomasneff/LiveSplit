@@ -32,8 +32,6 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RunEditorDialog));
             this.runGrid = new System.Windows.Forms.DataGridView();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.btnMoveDown = new System.Windows.Forms.Button();
-            this.btnMoveUp = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
@@ -41,13 +39,9 @@
             this.cbxRunCategory = new System.Windows.Forms.ComboBox();
             this.tbxTimeOffset = new System.Windows.Forms.TextBox();
             this.picGameIcon = new System.Windows.Forms.PictureBox();
-            this.btnInsert = new System.Windows.Forms.Button();
-            this.btnRemove = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.btnAdd = new System.Windows.Forms.Button();
-            this.btnAddComparison = new System.Windows.Forms.Button();
             this.tbxAttempts = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
@@ -56,6 +50,13 @@
             this.lblDescription = new System.Windows.Forms.Label();
             this.btnActivate = new System.Windows.Forms.Button();
             this.btnSettings = new System.Windows.Forms.Button();
+            this.btnInsert = new System.Windows.Forms.Button();
+            this.btnAdd = new System.Windows.Forms.Button();
+            this.btnRemove = new System.Windows.Forms.Button();
+            this.btnMoveUp = new System.Windows.Forms.Button();
+            this.btnMoveDown = new System.Windows.Forms.Button();
+            this.btnAddComparison = new System.Windows.Forms.Button();
+            this.btnImportComparison = new System.Windows.Forms.Button();
             this.RemoveIconMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.downloadBoxartToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -63,6 +64,10 @@
             this.removeIconToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.iRunBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.iSegmentBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.ImportComparisonMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.fromFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.fromURLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.fromSplitsioToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.runGrid)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picGameIcon)).BeginInit();
@@ -71,6 +76,7 @@
             this.RemoveIconMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.iRunBindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.iSegmentBindingSource)).BeginInit();
+            this.ImportComparisonMenu.SuspendLayout();
             this.SuspendLayout();
             // 
             // runGrid
@@ -104,9 +110,9 @@
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 39F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 62F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 49F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 138F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 61F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 106F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 136F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 65F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 104F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 88F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 115F));
@@ -131,6 +137,7 @@
             this.tableLayoutPanel1.Controls.Add(this.btnMoveUp, 0, 9);
             this.tableLayoutPanel1.Controls.Add(this.btnMoveDown, 0, 10);
             this.tableLayoutPanel1.Controls.Add(this.btnAddComparison, 0, 11);
+            this.tableLayoutPanel1.Controls.Add(this.btnImportComparison, 0, 12);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -151,30 +158,6 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 36F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(684, 517);
             this.tableLayoutPanel1.TabIndex = 1;
-            // 
-            // btnMoveDown
-            // 
-            this.btnMoveDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnMoveDown.Location = new System.Drawing.Point(10, 289);
-            this.btnMoveDown.Margin = new System.Windows.Forms.Padding(10, 3, 3, 3);
-            this.btnMoveDown.Name = "btnMoveDown";
-            this.btnMoveDown.Size = new System.Drawing.Size(102, 23);
-            this.btnMoveDown.TabIndex = 17;
-            this.btnMoveDown.Text = "Move Down";
-            this.btnMoveDown.UseVisualStyleBackColor = true;
-            this.btnMoveDown.Click += new System.EventHandler(this.btnMoveDown_Click);
-            // 
-            // btnMoveUp
-            // 
-            this.btnMoveUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnMoveUp.Location = new System.Drawing.Point(10, 260);
-            this.btnMoveUp.Margin = new System.Windows.Forms.Padding(10, 3, 3, 3);
-            this.btnMoveUp.Name = "btnMoveUp";
-            this.btnMoveUp.Size = new System.Drawing.Size(102, 23);
-            this.btnMoveUp.TabIndex = 16;
-            this.btnMoveUp.Text = "Move Up";
-            this.btnMoveUp.UseVisualStyleBackColor = true;
-            this.btnMoveUp.Click += new System.EventHandler(this.btnMoveUp_Click);
             // 
             // label2
             // 
@@ -241,7 +224,7 @@
             this.tbxTimeOffset.Location = new System.Drawing.Point(246, 82);
             this.tbxTimeOffset.Margin = new System.Windows.Forms.Padding(5, 0, 3, 0);
             this.tbxTimeOffset.Name = "tbxTimeOffset";
-            this.tbxTimeOffset.Size = new System.Drawing.Size(179, 20);
+            this.tbxTimeOffset.Size = new System.Drawing.Size(177, 20);
             this.tbxTimeOffset.TabIndex = 9;
             this.tbxTimeOffset.TextChanged += new System.EventHandler(this.tbxTimeOffset_TextChanged);
             // 
@@ -262,30 +245,6 @@
             this.picGameIcon.TabStop = false;
             this.picGameIcon.DoubleClick += new System.EventHandler(this.picGameIcon_DoubleClick);
             this.picGameIcon.MouseUp += new System.Windows.Forms.MouseEventHandler(this.picGameIcon_MouseUp);
-            // 
-            // btnInsert
-            // 
-            this.btnInsert.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnInsert.Location = new System.Drawing.Point(10, 173);
-            this.btnInsert.Margin = new System.Windows.Forms.Padding(10, 3, 3, 3);
-            this.btnInsert.Name = "btnInsert";
-            this.btnInsert.Size = new System.Drawing.Size(102, 23);
-            this.btnInsert.TabIndex = 1;
-            this.btnInsert.Text = "Insert Above";
-            this.btnInsert.UseVisualStyleBackColor = true;
-            this.btnInsert.Click += new System.EventHandler(this.btnInsert_Click);
-            // 
-            // btnRemove
-            // 
-            this.btnRemove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnRemove.Location = new System.Drawing.Point(10, 231);
-            this.btnRemove.Margin = new System.Windows.Forms.Padding(10, 3, 3, 3);
-            this.btnRemove.Name = "btnRemove";
-            this.btnRemove.Size = new System.Drawing.Size(102, 23);
-            this.btnRemove.TabIndex = 3;
-            this.btnRemove.Text = "Remove Segment";
-            this.btnRemove.UseVisualStyleBackColor = true;
-            this.btnRemove.Click += new System.EventHandler(this.btnRemove_Click);
             // 
             // tabControl1
             // 
@@ -321,47 +280,22 @@
             this.tabPage2.Text = "Game Time";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
-            // btnAdd
-            // 
-            this.btnAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAdd.Location = new System.Drawing.Point(10, 202);
-            this.btnAdd.Margin = new System.Windows.Forms.Padding(10, 3, 3, 3);
-            this.btnAdd.Name = "btnAdd";
-            this.btnAdd.Size = new System.Drawing.Size(102, 23);
-            this.btnAdd.TabIndex = 2;
-            this.btnAdd.Text = "Insert Below";
-            this.btnAdd.UseVisualStyleBackColor = true;
-            this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
-            // 
-            // btnAddComparison
-            // 
-            this.btnAddComparison.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAddComparison.Location = new System.Drawing.Point(10, 318);
-            this.btnAddComparison.Margin = new System.Windows.Forms.Padding(10, 3, 3, 3);
-            this.btnAddComparison.Name = "btnAddComparison";
-            this.btnAddComparison.Size = new System.Drawing.Size(102, 23);
-            this.btnAddComparison.TabIndex = 4;
-            this.btnAddComparison.Text = "Add Comparison";
-            this.btnAddComparison.UseVisualStyleBackColor = true;
-            this.btnAddComparison.Click += new System.EventHandler(this.btnAddComparison_Click);
-            // 
             // tbxAttempts
             // 
             this.tbxAttempts.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.tableLayoutPanel1.SetColumnSpan(this.tbxAttempts, 2);
-            this.tbxAttempts.Location = new System.Drawing.Point(494, 82);
+            this.tbxAttempts.Location = new System.Drawing.Point(496, 82);
             this.tbxAttempts.Margin = new System.Windows.Forms.Padding(5, 0, 10, 0);
             this.tbxAttempts.Name = "tbxAttempts";
-            this.tbxAttempts.Size = new System.Drawing.Size(179, 20);
+            this.tbxAttempts.Size = new System.Drawing.Size(177, 20);
             this.tbxAttempts.TabIndex = 10;
             this.tbxAttempts.TextChanged += new System.EventHandler(this.tbxAttempts_TextChanged);
             // 
             // label4
             // 
-            this.label4.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.label4.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(433, 86);
-            this.label4.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
+            this.label4.Location = new System.Drawing.Point(429, 86);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(51, 13);
             this.label4.TabIndex = 10;
@@ -372,24 +306,23 @@
             this.tableLayoutPanel2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.tableLayoutPanel2.ColumnCount = 2;
             this.tableLayoutPanel1.SetColumnSpan(this.tableLayoutPanel2, 4);
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 105F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 90F));
             this.tableLayoutPanel2.Controls.Add(this.btnCancel, 1, 0);
             this.tableLayoutPanel2.Controls.Add(this.btnOK, 0, 0);
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(489, 481);
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(491, 481);
             this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(0);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 1;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 36F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(195, 36);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(193, 36);
             this.tableLayoutPanel2.TabIndex = 12;
             // 
             // btnCancel
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(110, 3);
+            this.btnCancel.Location = new System.Drawing.Point(108, 3);
             this.btnCancel.Margin = new System.Windows.Forms.Padding(3, 3, 10, 10);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
@@ -401,7 +334,7 @@
             // btnOK
             // 
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOK.Location = new System.Drawing.Point(27, 3);
+            this.btnOK.Location = new System.Drawing.Point(25, 3);
             this.btnOK.Margin = new System.Windows.Forms.Padding(3, 3, 3, 10);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(75, 23);
@@ -415,9 +348,10 @@
             this.lblDescription.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.lblDescription.AutoSize = true;
             this.tableLayoutPanel1.SetColumnSpan(this.lblDescription, 5);
-            this.lblDescription.Location = new System.Drawing.Point(143, 121);
+            this.lblDescription.Location = new System.Drawing.Point(140, 121);
+            this.lblDescription.Margin = new System.Windows.Forms.Padding(0, 0, 5, 0);
             this.lblDescription.Name = "lblDescription";
-            this.lblDescription.Size = new System.Drawing.Size(343, 13);
+            this.lblDescription.Size = new System.Drawing.Size(346, 13);
             this.lblDescription.TabIndex = 13;
             this.lblDescription.Text = "Description";
             // 
@@ -442,6 +376,91 @@
             this.btnSettings.Text = "Settings";
             this.btnSettings.UseVisualStyleBackColor = true;
             this.btnSettings.Click += new System.EventHandler(this.btnSettings_Click);
+            // 
+            // btnInsert
+            // 
+            this.btnInsert.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnInsert.Location = new System.Drawing.Point(10, 173);
+            this.btnInsert.Margin = new System.Windows.Forms.Padding(10, 3, 3, 3);
+            this.btnInsert.Name = "btnInsert";
+            this.btnInsert.Size = new System.Drawing.Size(102, 23);
+            this.btnInsert.TabIndex = 1;
+            this.btnInsert.Text = "Insert Above";
+            this.btnInsert.UseVisualStyleBackColor = true;
+            this.btnInsert.Click += new System.EventHandler(this.btnInsert_Click);
+            // 
+            // btnAdd
+            // 
+            this.btnAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnAdd.Location = new System.Drawing.Point(10, 202);
+            this.btnAdd.Margin = new System.Windows.Forms.Padding(10, 3, 3, 3);
+            this.btnAdd.Name = "btnAdd";
+            this.btnAdd.Size = new System.Drawing.Size(102, 23);
+            this.btnAdd.TabIndex = 2;
+            this.btnAdd.Text = "Insert Below";
+            this.btnAdd.UseVisualStyleBackColor = true;
+            this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
+            // 
+            // btnRemove
+            // 
+            this.btnRemove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRemove.Location = new System.Drawing.Point(10, 231);
+            this.btnRemove.Margin = new System.Windows.Forms.Padding(10, 3, 3, 3);
+            this.btnRemove.Name = "btnRemove";
+            this.btnRemove.Size = new System.Drawing.Size(102, 23);
+            this.btnRemove.TabIndex = 3;
+            this.btnRemove.Text = "Remove Segment";
+            this.btnRemove.UseVisualStyleBackColor = true;
+            this.btnRemove.Click += new System.EventHandler(this.btnRemove_Click);
+            // 
+            // btnMoveUp
+            // 
+            this.btnMoveUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnMoveUp.Location = new System.Drawing.Point(10, 260);
+            this.btnMoveUp.Margin = new System.Windows.Forms.Padding(10, 3, 3, 3);
+            this.btnMoveUp.Name = "btnMoveUp";
+            this.btnMoveUp.Size = new System.Drawing.Size(102, 23);
+            this.btnMoveUp.TabIndex = 16;
+            this.btnMoveUp.Text = "Move Up";
+            this.btnMoveUp.UseVisualStyleBackColor = true;
+            this.btnMoveUp.Click += new System.EventHandler(this.btnMoveUp_Click);
+            // 
+            // btnMoveDown
+            // 
+            this.btnMoveDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnMoveDown.Location = new System.Drawing.Point(10, 289);
+            this.btnMoveDown.Margin = new System.Windows.Forms.Padding(10, 3, 3, 3);
+            this.btnMoveDown.Name = "btnMoveDown";
+            this.btnMoveDown.Size = new System.Drawing.Size(102, 23);
+            this.btnMoveDown.TabIndex = 17;
+            this.btnMoveDown.Text = "Move Down";
+            this.btnMoveDown.UseVisualStyleBackColor = true;
+            this.btnMoveDown.Click += new System.EventHandler(this.btnMoveDown_Click);
+            // 
+            // btnAddComparison
+            // 
+            this.btnAddComparison.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnAddComparison.Location = new System.Drawing.Point(10, 318);
+            this.btnAddComparison.Margin = new System.Windows.Forms.Padding(10, 3, 3, 3);
+            this.btnAddComparison.Name = "btnAddComparison";
+            this.btnAddComparison.Size = new System.Drawing.Size(102, 23);
+            this.btnAddComparison.TabIndex = 4;
+            this.btnAddComparison.Text = "Add Comparison";
+            this.btnAddComparison.UseVisualStyleBackColor = true;
+            this.btnAddComparison.Click += new System.EventHandler(this.btnAddComparison_Click);
+            // 
+            // btnImportComparison
+            // 
+            this.btnImportComparison.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnImportComparison.Location = new System.Drawing.Point(10, 347);
+            this.btnImportComparison.Margin = new System.Windows.Forms.Padding(10, 3, 3, 3);
+            this.btnImportComparison.Name = "btnImportComparison";
+            this.btnImportComparison.Size = new System.Drawing.Size(102, 23);
+            this.btnImportComparison.TabIndex = 18;
+            this.btnImportComparison.Text = "Import Comparison";
+            this.btnImportComparison.UseVisualStyleBackColor = true;
+            this.btnImportComparison.Click += new System.EventHandler(this.btnImportComparison_Click);
             // 
             // RemoveIconMenu
             // 
@@ -489,6 +508,36 @@
             // 
             this.iSegmentBindingSource.DataSource = typeof(LiveSplit.Model.ISegment);
             // 
+            // ImportComparisonMenu
+            // 
+            this.ImportComparisonMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.fromFileToolStripMenuItem,
+            this.fromURLToolStripMenuItem,
+            this.fromSplitsioToolStripMenuItem});
+            this.ImportComparisonMenu.Name = "ImportComparisonMenu";
+            this.ImportComparisonMenu.Size = new System.Drawing.Size(156, 70);
+            // 
+            // fromFileToolStripMenuItem
+            // 
+            this.fromFileToolStripMenuItem.Name = "fromFileToolStripMenuItem";
+            this.fromFileToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
+            this.fromFileToolStripMenuItem.Text = "From File...";
+            this.fromFileToolStripMenuItem.Click += new System.EventHandler(this.fromFileToolStripMenuItem_Click);
+            // 
+            // fromURLToolStripMenuItem
+            // 
+            this.fromURLToolStripMenuItem.Name = "fromURLToolStripMenuItem";
+            this.fromURLToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
+            this.fromURLToolStripMenuItem.Text = "From URL...";
+            this.fromURLToolStripMenuItem.Click += new System.EventHandler(this.fromURLToolStripMenuItem_Click);
+            // 
+            // fromSplitsioToolStripMenuItem
+            // 
+            this.fromSplitsioToolStripMenuItem.Name = "fromSplitsioToolStripMenuItem";
+            this.fromSplitsioToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
+            this.fromSplitsioToolStripMenuItem.Text = "From Splits.io...";
+            this.fromSplitsioToolStripMenuItem.Click += new System.EventHandler(this.fromSplitsioToolStripMenuItem_Click);
+            // 
             // RunEditorDialog
             // 
             this.AcceptButton = this.btnOK;
@@ -498,7 +547,7 @@
             this.ClientSize = new System.Drawing.Size(684, 517);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MinimumSize = new System.Drawing.Size(700, 420);
+            this.MinimumSize = new System.Drawing.Size(700, 450);
             this.Name = "RunEditorDialog";
             this.Text = "Splits Editor";
             this.Load += new System.EventHandler(this.RunEditorDialog_Load);
@@ -511,6 +560,7 @@
             this.RemoveIconMenu.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.iRunBindingSource)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.iSegmentBindingSource)).EndInit();
+            this.ImportComparisonMenu.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -550,5 +600,10 @@
         private System.Windows.Forms.Button btnSettings;
         private System.Windows.Forms.Button btnMoveDown;
         private System.Windows.Forms.Button btnMoveUp;
+        private System.Windows.Forms.Button btnImportComparison;
+        private System.Windows.Forms.ContextMenuStrip ImportComparisonMenu;
+        private System.Windows.Forms.ToolStripMenuItem fromFileToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem fromURLToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem fromSplitsioToolStripMenuItem;
     }
 }
