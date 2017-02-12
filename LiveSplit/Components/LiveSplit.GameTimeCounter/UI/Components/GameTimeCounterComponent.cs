@@ -183,7 +183,17 @@ namespace LiveSplit.UI.Components
 			// Counter = new Counter(Settings.InitialValue, Settings.Increment);
 			Counters = new List<IGameTimeCounter>();
 		}
+		private Color GetBestSegmentColor(LiveSplitState state)
+		{
+			if (state.LayoutSettings.UseRainbowColor)
+			{
+				var hue = (((int)DateTime.Now.TimeOfDay.TotalMilliseconds / 100) % 36) * 10;
+				var rainbowColor = ColorExtensions.FromHSV(hue, 1, 1);
+				return Color.FromArgb((rainbowColor.R * 2 + 255 * 1) / 3, (rainbowColor.G * 2 + 255 * 1) / 3, (rainbowColor.B * 2 + 255 * 1) / 3);
+			}
 
+			return state.LayoutSettings.BestSegmentColor;
+		}
 		public void Update(IInvalidator invalidator, Model.LiveSplitState state, float width, float height, LayoutMode mode)
 		{
 			try
@@ -257,6 +267,89 @@ namespace LiveSplit.UI.Components
 				TotalCounterValueLabel.Text = sum.ToString(); //TODO: have counters for PB, store PB
 			if (TotalCounterNameLabel != null)
 				TotalCounterNameLabel.Text = Settings.CounterText;
+
+			TimeSpan? timeChange = null;
+			string comparison = "";
+			if(state.CurrentSplitIndex >= 0 && state.CurrentSplitIndex < Counters.Count)
+			{
+				comparison = state.CurrentComparison;
+				var splitTime = state.Run[state.CurrentSplitIndex].Comparisons[comparison][TimingMethod.GameTime];
+				TimeSpan? previousSplitTime = new TimeSpan(0, 0, 0);
+				if(state.CurrentSplitIndex - 1 >= 0)
+					previousSplitTime = state.Run[state.CurrentSplitIndex - 1].Comparisons[comparison][TimingMethod.GameTime];
+
+
+				timeChange = new TimeSpan(0, 0, Counters[state.CurrentSplitIndex].Count - (splitTime.Value.Seconds - previousSplitTime.Value.Seconds));//LiveSplitStateHelper.GetLiveSegmentDelta(state, state.CurrentSplitIndex, comparison, TimingMethod.GameTime);
+			}
+
+
+			//TODO: total counter color
+
+			if (timeChange != null)
+			{
+				Color color = Settings.OverrideTextColor ? Settings.CounterTextColor : state.LayoutSettings.TextColor;
+		
+
+				if (timeChange.Value.Seconds == 0)
+				{
+					
+				}
+				else if(Counters[state.CurrentSplitIndex].Count < state.Run[state.CurrentSplitIndex].BestSegmentTime.GameTime.Value.Seconds)
+				{
+					//best seg
+					if (state.LayoutSettings.ShowBestSegments)
+					{
+						color = GetBestSegmentColor(state);
+					}
+				}
+				else
+				{
+					color = LiveSplitStateHelper.GetSplitColor(state, timeChange, state.CurrentSplitIndex, false, false, comparison, TimingMethod.GameTime).Value;
+				}
+
+				CounterValueLabel.ForeColor = color;
+
+			}
+			else
+			{
+				var color = Settings.OverrideTextColor ? Settings.CounterTextColor : state.LayoutSettings.TextColor;
+				CounterValueLabel.ForeColor = color;
+			}
+
+			//TODO: total counter color
+			if (state.CurrentSplitIndex >= 0 && state.CurrentSplitIndex < Counters.Count)
+			{
+				comparison = state.CurrentComparison;
+				var splitTime = state.Run[state.CurrentSplitIndex].Comparisons[comparison][TimingMethod.GameTime];
+				timeChange = new TimeSpan(0, 0, sum - splitTime.Value.Seconds);//LiveSplitStateHelper.GetLiveSegmentDelta(state, state.CurrentSplitIndex, comparison, TimingMethod.GameTime);
+			}
+
+
+
+
+			if (timeChange != null)
+			{
+				Color color = Settings.OverrideTextColor ? Settings.CounterTextColor : state.LayoutSettings.TextColor;
+				
+				if (timeChange.Value.Seconds == 0)
+				{
+
+				}
+				else
+				{
+					color = LiveSplitStateHelper.GetSplitColor(state, timeChange, state.CurrentSplitIndex, false, false, comparison, TimingMethod.GameTime).Value;
+				}
+
+				TotalCounterValueLabel.ForeColor = color;
+
+			}
+			else
+			{
+				var color = Settings.OverrideTextColor ? Settings.CounterTextColor : state.LayoutSettings.TextColor;
+				TotalCounterValueLabel.ForeColor = color;
+			}
+
+
 			Cache.Restart();
 			Cache["CounterNameLabel"] = CounterNameLabel.Text;
 			Cache["CounterValueLabel"] = CounterValueLabel.Text;
@@ -342,7 +435,7 @@ namespace LiveSplit.UI.Components
 			CounterValueLabel.Width = width / 2 - 10;//(width - 10);
 			CounterValueLabel.Height = height;
 			CounterValueLabel.Font = CounterFont;
-			CounterValueLabel.Brush = new SolidBrush(Settings.OverrideTextColor ? Settings.CounterValueColor : state.LayoutSettings.TextColor);
+			CounterValueLabel.Brush = new SolidBrush(CounterValueLabel.ForeColor);//new SolidBrush(Settings.OverrideTextColor ? Settings.CounterValueColor : state.LayoutSettings.TextColor);
 			CounterValueLabel.HasShadow = state.LayoutSettings.DropShadows;
 			CounterValueLabel.ShadowColor = state.LayoutSettings.ShadowsColor;
 			CounterValueLabel.Draw(g);
@@ -355,7 +448,7 @@ namespace LiveSplit.UI.Components
 			TotalCounterValueLabel.Width = (width - 10);//(width - 10);
 			TotalCounterValueLabel.Height = height;
 			TotalCounterValueLabel.Font = CounterFont;
-			TotalCounterValueLabel.Brush = new SolidBrush(Settings.OverrideTextColor ? Settings.CounterValueColor : state.LayoutSettings.TextColor);
+			TotalCounterValueLabel.Brush = new SolidBrush(TotalCounterValueLabel.ForeColor);//new SolidBrush(Settings.OverrideTextColor ? Settings.CounterValueColor : state.LayoutSettings.TextColor);
 			TotalCounterValueLabel.HasShadow = state.LayoutSettings.DropShadows;
 			TotalCounterValueLabel.ShadowColor = state.LayoutSettings.ShadowsColor;
 			TotalCounterValueLabel.Draw(g);
@@ -389,6 +482,19 @@ namespace LiveSplit.UI.Components
 				{
 					Counters[state.CurrentSplitIndex].Reset();
 				}
+
+
+				int sum = 0;
+
+				for (int i = 0; i < state.CurrentSplitIndex; ++i)
+				{
+					sum += Counters[i].Count;
+				}
+
+				Time gametime = new Time(state.Run[state.CurrentSplitIndex].SplitTime.RealTime, new TimeSpan(0, 0, sum));
+				state.Run[state.CurrentSplitIndex].SplitTime = gametime;
+				
+				
 			}
 		}
 
