@@ -54,22 +54,16 @@ namespace LiveSplit.UI.Components
 			this.state = state;
 			Settings.CounterReinitialiseRequired += Settings_CounterReinitialiseRequired;
 			Settings.IncrementUpdateRequired += Settings_IncrementUpdateRequired;
-
+			
 			// Subscribe to input hooks.
 			Settings.Hook.KeyOrButtonPressed += hook_KeyOrButtonPressed;
+			Settings.GetCounterTextBox().TextChanged += GameTimeCounterComponent_TextChanged;
 			Initialized = false;
 			Counters.Clear();
 
 			foreach (ISegment split in state.Run)
 			{
-				if (split.SplitTime[TimingMethod.GameTime] == null)
-				{
-					Counters.Add(new GameTimeCounter(Settings.InitialValue, Settings.Increment));
-				}
-				else
-				{
-					Counters.Add(new GameTimeCounter(split.SplitTime[TimingMethod.GameTime].Value.Seconds, Settings.Increment));
-				}
+				Counters.Add(new GameTimeCounter(Settings.InitialValue, Settings.Increment));
 			}
 
 			int sum = 0;
@@ -96,6 +90,11 @@ namespace LiveSplit.UI.Components
 			Cache["CounterValueLabel"] = CounterValueLabel.Text;
 			Cache["TotalCounterNameLabel"] = TotalCounterNameLabel.Text;
 			Cache["TotalCounterValueLabel"] = TotalCounterValueLabel.Text;
+		}
+
+		private void GameTimeCounterComponent_TextChanged(object sender, EventArgs e)
+		{
+			Redraw = true;
 		}
 
 		#endregion Public Constructors
@@ -203,14 +202,7 @@ namespace LiveSplit.UI.Components
 
 				foreach (ISegment split in state.Run)
 				{
-					if (split.SplitTime[TimingMethod.GameTime] == null)
-					{
-						Counters.Add(new GameTimeCounter(Settings.InitialValue, Settings.Increment));
-					}
-					else
-					{
-						Counters.Add(new GameTimeCounter(split.SplitTime[TimingMethod.GameTime].Value.Seconds, Settings.Increment));
-					}
+					Counters.Add(new GameTimeCounter(Settings.InitialValue, Settings.Increment));
 				}
 
 				state.OnStart += State_OnStart;
@@ -219,6 +211,7 @@ namespace LiveSplit.UI.Components
 				state.OnSplit += State_OnSplit;
 				state.OnSwitchComparisonNext += State_OnSwitchComparisonNext;
 				state.OnSwitchComparisonPrevious += State_OnSwitchComparisonPrevious;
+				state.OnUndoSplit += State_OnUndoSplit;
 				PBSplit = state.Run.Last();
 			}
 			int sum = 0;
@@ -356,6 +349,8 @@ namespace LiveSplit.UI.Components
 				invalidator.Invalidate(0, 0, width, height);
 			}
 		}
+
+		
 
 		private void State_OnSwitchComparisonPrevious(object sender, EventArgs e)
 		{
@@ -504,6 +499,8 @@ namespace LiveSplit.UI.Components
 
 				for (int i = 0; i < state.CurrentSplitIndex; ++i)
 				{
+					if (i >= Counters.Count)
+						continue;
 					sum += Counters[i].Count;
 				}
 
@@ -542,6 +539,13 @@ namespace LiveSplit.UI.Components
 			state.Run[state.CurrentSplitIndex].SplitTime = default(Time);
 		}
 
+		private void State_OnUndoSplit(object sender, EventArgs e)
+		{
+			//clear counter
+			if(state.CurrentSplitIndex + 1 < Counters.Count)
+				Counters[state.CurrentSplitIndex + 1] = new GameTimeCounter();
+		}
+
 		private void State_OnSplit(object sender, EventArgs e)
 		{
 			//throw new NotImplementedException();
@@ -550,6 +554,9 @@ namespace LiveSplit.UI.Components
 
 			for (int i = 0; i < state.CurrentSplitIndex; ++i)
 			{
+				if (i >= Counters.Count)
+					continue;
+
 				sum += Counters[i].Count;
 			}
 

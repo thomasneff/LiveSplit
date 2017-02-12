@@ -87,6 +87,7 @@ namespace LiveSplit.UI.Components
 		public Font CounterFont { get; set; }
 		public string CounterFontString { get { return String.Format("{0} {1}", CounterFont.FontFamily.Name, CounterFont.Style); } }
 		public string CounterText { get; set; }
+
 		public Color CounterTextColor { get; set; }
 		public Color CounterValueColor { get; set; }
 		public KeyOrButton DecrementKey { get; set; }
@@ -109,6 +110,11 @@ namespace LiveSplit.UI.Components
 		#endregion Public Properties
 
 		#region Public Methods
+
+		public TextBox GetCounterTextBox()
+		{
+			return txtCounterText;
+		}
 
 		public XmlNode GetSettings(XmlDocument document)
 		{
