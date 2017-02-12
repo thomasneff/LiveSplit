@@ -26,6 +26,10 @@ namespace LiveSplit.UI.Components
 
 		protected SimpleLabel CounterValueLabel = new SimpleLabel();
 
+		protected SimpleLabel TotalCounterNameLabel = new SimpleLabel();
+
+		protected SimpleLabel TotalCounterValueLabel = new SimpleLabel();
+
 		#endregion Protected Fields
 
 		#region Private Fields
@@ -42,6 +46,7 @@ namespace LiveSplit.UI.Components
 			Settings = new GameTimeCounterComponentSettings();
 			Cache = new GraphicsCache();
 			CounterNameLabel = new SimpleLabel();
+			TotalCounterNameLabel = new SimpleLabel();
 			Counters = new List<IGameTimeCounter>();
 
 			this.state = state;
@@ -50,6 +55,49 @@ namespace LiveSplit.UI.Components
 
 			// Subscribe to input hooks.
 			Settings.Hook.KeyOrButtonPressed += hook_KeyOrButtonPressed;
+			Initialized = false;
+			Counters.Clear();
+			
+
+			foreach (ISegment split in state.Run)
+			{
+				if (split.SplitTime[TimingMethod.GameTime] == null)
+				{
+					Counters.Add(new GameTimeCounter(Settings.InitialValue, Settings.Increment));
+				}
+				else
+				{
+					Counters.Add(new GameTimeCounter(split.SplitTime[TimingMethod.GameTime].Value.Seconds, Settings.Increment));
+				}
+			}
+
+			int sum = 0;
+			for (int i = 0; i <= state.CurrentSplitIndex && i < Counters.Count; ++i)
+			{
+				sum += Counters[i].Count;
+			}
+			
+
+			if(state.CurrentSplitIndex >= 0 && Counters.Count > state.CurrentSplitIndex)
+			{
+				CounterValueLabel.Text = Counters[state.CurrentSplitIndex].Count.ToString();
+				CounterNameLabel.Text = state.CurrentSplit.Name + ":";
+			}
+			else
+			{
+				CounterValueLabel.Text = "0";
+				CounterNameLabel.Text = state.Run.First().Name + ":";
+			}
+			
+			TotalCounterValueLabel.Text = sum.ToString(); //TODO: have counters for PB, store PB
+			TotalCounterNameLabel.Text = Settings.CounterText;
+			Cache.Restart();
+			Cache["CounterNameLabel"] = CounterNameLabel.Text;
+			Cache["CounterValueLabel"] = CounterValueLabel.Text;
+			Cache["TotalCounterNameLabel"] = TotalCounterNameLabel.Text;
+			Cache["TotalCounterValueLabel"] = TotalCounterValueLabel.Text;
+
+			
 		}
 
 		#endregion Public Constructors
@@ -76,7 +124,7 @@ namespace LiveSplit.UI.Components
 		{
 			get
 			{
-				return CounterNameLabel.X + CounterValueLabel.ActualWidth;
+				return CounterNameLabel.X + CounterValueLabel.ActualWidth + TotalCounterNameLabel.ActualWidth + TotalCounterValueLabel.ActualWidth;
 			}
 		}
 
@@ -147,6 +195,9 @@ namespace LiveSplit.UI.Components
 
 			this.state = state;
 
+			if (state == null)
+				return;
+
 			if (Initialized == false)
 			{
 				Counters.Clear();
@@ -176,12 +227,41 @@ namespace LiveSplit.UI.Components
 			{
 				sum += Counters[i].Count;
 			}
-			CounterNameLabel.Text = Settings.CounterText;
-			CounterValueLabel.Text = sum.ToString(); //TODO: have counters for PB, store PB
+			if (CounterNameLabel != null)
+			{
+				if(state.CurrentSplit != null)
+				{
+					CounterNameLabel.Text = state.CurrentSplit.Name + ":";
+				}
+				else
+				{
+					CounterNameLabel.Text = state.Run.First().Name + ":";
+				}
+			}
 
+			if (CounterValueLabel != null)
+			{
+				if(state.CurrentSplitIndex < 0 || state.CurrentSplitIndex >= Counters.Count)
+				{
+					CounterValueLabel.Text = "0";
+				}
+				else
+				{
+					CounterValueLabel.Text = Counters[state.CurrentSplitIndex].Count.ToString();
+				}
+				
+			}
+				
+
+			if (TotalCounterValueLabel != null)
+				TotalCounterValueLabel.Text = sum.ToString(); //TODO: have counters for PB, store PB
+			if (TotalCounterNameLabel != null)
+				TotalCounterNameLabel.Text = Settings.CounterText;
 			Cache.Restart();
 			Cache["CounterNameLabel"] = CounterNameLabel.Text;
 			Cache["CounterValueLabel"] = CounterValueLabel.Text;
+			Cache["TotalCounterNameLabel"] = TotalCounterNameLabel.Text;
+			Cache["TotalCounterValueLabel"] = TotalCounterValueLabel.Text;
 
 			if (invalidator != null && Cache.HasChanged)
 			{
@@ -226,14 +306,14 @@ namespace LiveSplit.UI.Components
 
 			// Assume most users won't count past four digits (will cause a layout resize in Horizontal Mode).
 			float fourCharWidth = g.MeasureString("1000", CounterFont).Width;
-			HorizontalWidth = CounterNameLabel.X + CounterNameLabel.ActualWidth + (fourCharWidth > CounterValueLabel.ActualWidth ? fourCharWidth : CounterValueLabel.ActualWidth) + 5;
+			HorizontalWidth = CounterNameLabel.X + CounterNameLabel.ActualWidth  + TotalCounterNameLabel.ActualWidth + TotalCounterValueLabel.ActualWidth + (fourCharWidth > CounterValueLabel.ActualWidth ? fourCharWidth : CounterValueLabel.ActualWidth) + 5;
 
 			// Set Counter Name Label
 			CounterNameLabel.HorizontalAlignment = mode == LayoutMode.Horizontal ? StringAlignment.Near : StringAlignment.Near;
 			CounterNameLabel.VerticalAlignment = StringAlignment.Center;
 			CounterNameLabel.X = 5;
 			CounterNameLabel.Y = 0;
-			CounterNameLabel.Width = (width - fourCharWidth - 5);
+			CounterNameLabel.Width = (width/2 - fourCharWidth - 5);
 			CounterNameLabel.Height = height;
 			CounterNameLabel.Font = CounterFont;
 			CounterNameLabel.Brush = new SolidBrush(Settings.OverrideTextColor ? Settings.CounterTextColor : state.LayoutSettings.TextColor);
@@ -241,18 +321,44 @@ namespace LiveSplit.UI.Components
 			CounterNameLabel.ShadowColor = state.LayoutSettings.ShadowsColor;
 			CounterNameLabel.Draw(g);
 
+			// Set Counter Name Label
+			TotalCounterNameLabel.HorizontalAlignment = mode == LayoutMode.Horizontal ? StringAlignment.Far : StringAlignment.Far;
+			TotalCounterNameLabel.VerticalAlignment = StringAlignment.Center;
+			TotalCounterNameLabel.X = TotalCounterNameLabel.ActualWidth + fourCharWidth;
+			TotalCounterNameLabel.Y = 0;
+			TotalCounterNameLabel.Width = (width / 2 - fourCharWidth - 5);//(width - fourCharWidth - 5);
+			TotalCounterNameLabel.Height = height;
+			TotalCounterNameLabel.Font = CounterFont;
+			TotalCounterNameLabel.Brush = new SolidBrush(Settings.OverrideTextColor ? Settings.CounterTextColor : state.LayoutSettings.TextColor);
+			TotalCounterNameLabel.HasShadow = state.LayoutSettings.DropShadows;
+			TotalCounterNameLabel.ShadowColor = state.LayoutSettings.ShadowsColor;
+			TotalCounterNameLabel.Draw(g);
+
 			// Set Counter Value Label.
-			CounterValueLabel.HorizontalAlignment = mode == LayoutMode.Horizontal ? StringAlignment.Far : StringAlignment.Far;
+			CounterValueLabel.HorizontalAlignment = mode == LayoutMode.Horizontal ? StringAlignment.Near : StringAlignment.Near;
 			CounterValueLabel.VerticalAlignment = StringAlignment.Center;
-			CounterValueLabel.X = 5;
+			CounterValueLabel.X = width / 2 -  fourCharWidth;
 			CounterValueLabel.Y = 0;
-			CounterValueLabel.Width = (width - 10);
+			CounterValueLabel.Width = width / 2 - 10;//(width - 10);
 			CounterValueLabel.Height = height;
 			CounterValueLabel.Font = CounterFont;
 			CounterValueLabel.Brush = new SolidBrush(Settings.OverrideTextColor ? Settings.CounterValueColor : state.LayoutSettings.TextColor);
 			CounterValueLabel.HasShadow = state.LayoutSettings.DropShadows;
 			CounterValueLabel.ShadowColor = state.LayoutSettings.ShadowsColor;
 			CounterValueLabel.Draw(g);
+
+			// Set Counter Value Label.
+			TotalCounterValueLabel.HorizontalAlignment = mode == LayoutMode.Horizontal ? StringAlignment.Far : StringAlignment.Far;
+			TotalCounterValueLabel.VerticalAlignment = StringAlignment.Center;
+			TotalCounterValueLabel.X = 5;
+			TotalCounterValueLabel.Y = 0;
+			TotalCounterValueLabel.Width = (width - 10);//(width - 10);
+			TotalCounterValueLabel.Height = height;
+			TotalCounterValueLabel.Font = CounterFont;
+			TotalCounterValueLabel.Brush = new SolidBrush(Settings.OverrideTextColor ? Settings.CounterValueColor : state.LayoutSettings.TextColor);
+			TotalCounterValueLabel.HasShadow = state.LayoutSettings.DropShadows;
+			TotalCounterValueLabel.ShadowColor = state.LayoutSettings.ShadowsColor;
+			TotalCounterValueLabel.Draw(g);
 		}
 
 		// Basic support for keyboard/button input.
