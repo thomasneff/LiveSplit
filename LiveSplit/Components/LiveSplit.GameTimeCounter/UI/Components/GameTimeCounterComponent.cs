@@ -181,6 +181,18 @@ namespace LiveSplit.UI.Components
 			Counters = new List<IGameTimeCounter>();
 		}
 
+		int GetAllSecondsFromTimeSpan(TimeSpan? val)
+		{
+			int ret = 0;
+
+			if (val != null)
+			{
+				ret = val.Value.Seconds + val.Value.Minutes * 60 + val.Value.Hours * 3600 + val.Value.Days * 86400;
+			}
+
+			return ret;
+		}
+
 		public void Update(IInvalidator invalidator, Model.LiveSplitState state, float width, float height, LayoutMode mode)
 		{
 			try
@@ -264,17 +276,17 @@ namespace LiveSplit.UI.Components
 					previousSplitTime = new TimeSpan(0, 0, 0);
 				}
 
-				timeChange = new TimeSpan(0, 0, Counters[state.CurrentSplitIndex].Count - (splitTime.Value.Seconds - previousSplitTime.Value.Seconds));//LiveSplitStateHelper.GetLiveSegmentDelta(state, state.CurrentSplitIndex, comparison, TimingMethod.GameTime);
+				timeChange = new TimeSpan(0, 0, Counters[state.CurrentSplitIndex].Count - (GetAllSecondsFromTimeSpan(splitTime) - GetAllSecondsFromTimeSpan(previousSplitTime)));//LiveSplitStateHelper.GetLiveSegmentDelta(state, state.CurrentSplitIndex, comparison, TimingMethod.GameTime);
 			}
 
 			if (timeChange != null)
 			{
 				Color color = Settings.OverrideTextColor ? Settings.CounterTextColor : state.LayoutSettings.TextColor;
 
-				if (timeChange.Value.Seconds == 0)
+				if (GetAllSecondsFromTimeSpan(timeChange) == 0)
 				{
 				}
-				else if (Counters[state.CurrentSplitIndex].Count < state.Run[state.CurrentSplitIndex].BestSegmentTime.GameTime.Value.Seconds)
+				else if (Counters[state.CurrentSplitIndex].Count < GetAllSecondsFromTimeSpan(state.Run[state.CurrentSplitIndex].BestSegmentTime.GameTime))
 				{
 					//best seg
 					if (state.LayoutSettings.ShowBestSegments)
@@ -307,14 +319,14 @@ namespace LiveSplit.UI.Components
 			{
 				comparison = state.CurrentComparison;
 				var splitTime = state.Run[state.CurrentSplitIndex].Comparisons[comparison][TimingMethod.GameTime];
-				timeChange = new TimeSpan(0, 0, sum - splitTime.Value.Seconds);//LiveSplitStateHelper.GetLiveSegmentDelta(state, state.CurrentSplitIndex, comparison, TimingMethod.GameTime);
+				timeChange = new TimeSpan(0, 0, sum - GetAllSecondsFromTimeSpan(splitTime));//LiveSplitStateHelper.GetLiveSegmentDelta(state, state.CurrentSplitIndex, comparison, TimingMethod.GameTime);
 			}
 
 			if (timeChange != null)
 			{
 				Color color = Settings.OverrideTextColor ? Settings.CounterTextColor : state.LayoutSettings.TextColor;
 
-				if (timeChange.Value.Seconds == 0)
+				if (GetAllSecondsFromTimeSpan(timeChange) == 0)
 				{
 				}
 				else
