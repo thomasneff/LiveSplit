@@ -61,10 +61,7 @@ namespace LiveSplit.UI.Components
 			Initialized = false;
 			Counters.Clear();
 
-			foreach (ISegment split in state.Run)
-			{
-				Counters.Add(new GameTimeCounter(Settings.InitialValue, Settings.Increment));
-			}
+			InitCounterFromState();
 
 			int sum = 0;
 			for (int i = 0; i <= state.CurrentSplitIndex && i < Counters.Count; ++i)
@@ -178,7 +175,8 @@ namespace LiveSplit.UI.Components
 
 			// Initialise Counter from settings.
 			// Counter = new Counter(Settings.InitialValue, Settings.Increment);
-			Counters = new List<IGameTimeCounter>();
+			//Counters = new List<IGameTimeCounter>();
+			Initialized = false;
 		}
 
 		int GetAllSecondsFromTimeSpan(TimeSpan? val)
@@ -192,6 +190,55 @@ namespace LiveSplit.UI.Components
 
 			return ret;
 		}
+
+		void InitCounterFromState()
+		{
+			if(state == null)
+			{
+				return;
+			}
+			Counters = new List<IGameTimeCounter>();
+			bool beforeCurrentSplit = true;
+			TimeSpan? previousSplitTime = default(TimeSpan);
+			TimeSpan? splitTime = default(TimeSpan);
+			TimeSpan? splitTimeDif = default(TimeSpan);
+			foreach (ISegment split in state.Run)
+			{
+				if(split == state.CurrentSplit || state.CurrentSplitIndex < 0)
+				{
+					beforeCurrentSplit = false;
+				}
+
+				if(beforeCurrentSplit)
+				{
+					splitTime = split.SplitTime.GameTime;
+
+					if(splitTime != null)
+					{
+						splitTimeDif = splitTime - previousSplitTime;
+					}
+					else
+					{
+						splitTimeDif = splitTime;
+					}
+
+					Counters.Add(new GameTimeCounter(GetAllSecondsFromTimeSpan(splitTimeDif), Settings.Increment));
+				}
+				else
+				{
+					Counters.Add(new GameTimeCounter(Settings.InitialValue, Settings.Increment));
+				}
+
+				if(splitTime != null)
+				{
+					previousSplitTime = splitTime;
+				}
+				
+
+
+			}
+		}
+
 
 		public void Update(IInvalidator invalidator, Model.LiveSplitState state, float width, float height, LayoutMode mode)
 		{
@@ -212,10 +259,7 @@ namespace LiveSplit.UI.Components
 				Counters.Clear();
 				Initialized = true;
 
-				foreach (ISegment split in state.Run)
-				{
-					Counters.Add(new GameTimeCounter(Settings.InitialValue, Settings.Increment));
-				}
+				InitCounterFromState();
 
 				state.OnStart += State_OnStart;
 				state.OnReset += State_OnReset;
@@ -485,10 +529,10 @@ namespace LiveSplit.UI.Components
 				|| Settings.GlobalHotkeysEnabled)
 			{
 				if (Counters == null)
-					return;
-
-				if (Counters.Count == 0)
-					return;
+				{
+					//initialize counters with run
+					InitCounterFromState();
+				}
 
 				if (state.CurrentSplitIndex >= Counters.Count)
 					return;
@@ -528,6 +572,7 @@ namespace LiveSplit.UI.Components
 		{
 			//Counter = new Counter(Settings.InitialValue, Settings.Increment);
 			Counters = new List<IGameTimeCounter>();
+			Initialized = false;
 		}
 
 		private void Settings_IncrementUpdateRequired(object sender, EventArgs e)
@@ -564,13 +609,30 @@ namespace LiveSplit.UI.Components
 
 			int sum = 0;
 
-			for (int i = 0; i < state.CurrentSplitIndex; ++i)
-			{
-				if (i >= Counters.Count)
-					continue;
 
-				sum += Counters[i].Count;
+			if (state == null)
+			{
+				return;
 			}
+
+			if(state.CurrentSplitIndex < 1 || state.CurrentSplitIndex > Counters.Count)
+			{
+				return;
+			}
+
+			sum = Counters[state.CurrentSplitIndex - 1].Count;
+			for (int idx = state.CurrentSplitIndex - 2; idx >= 0; idx--)
+			{
+				TimeSpan? splitTime = state.Run[idx].SplitTime.GameTime;
+				if (splitTime == null)
+				{
+					continue;
+				}
+
+				sum += GetAllSecondsFromTimeSpan(splitTime);
+				break;
+			}
+
 
 			Time gametime = new Time(state.Run[state.CurrentSplitIndex - 1].SplitTime.RealTime, new TimeSpan(0, 0, sum));
 			state.Run[state.CurrentSplitIndex - 1].SplitTime = gametime;

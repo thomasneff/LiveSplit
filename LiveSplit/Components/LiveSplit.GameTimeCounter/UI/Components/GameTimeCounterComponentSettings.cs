@@ -151,6 +151,9 @@ namespace LiveSplit.UI.Components
 			XmlElement resetElement = element["ResetKey"];
 			ResetKey = string.IsNullOrEmpty(resetElement.InnerText) ? null : new KeyOrButton(resetElement.InnerText);
 
+			txtIncrement.Text = FormatKey(IncrementKey);
+			txtDecrement.Text = FormatKey(DecrementKey);
+			txtReset.Text = FormatKey(ResetKey);
 			RegisterHotKeys();
 		}
 
