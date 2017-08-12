@@ -37,6 +37,7 @@ namespace LiveSplit.UI.Components
 		#region Private Fields
 
 		private LiveSplitState state;
+		
 
 		#endregion Private Fields
 
@@ -80,13 +81,20 @@ namespace LiveSplit.UI.Components
 				CounterNameLabel.Text = state.Run.First().Name + ":";
 			}
 
+			/*string totalCounterText = sum.ToString();
+			string
+			if (Settings.ShowDeltasEnabled)
+			{
+
+			}*/
+
 			TotalCounterValueLabel.Text = sum.ToString(); //TODO: have counters for PB, store PB
 			TotalCounterNameLabel.Text = Settings.CounterText;
 			Cache.Restart();
 			Cache["CounterNameLabel"] = CounterNameLabel.Text;
 			Cache["CounterValueLabel"] = CounterValueLabel.Text;
 			Cache["TotalCounterNameLabel"] = TotalCounterNameLabel.Text;
-			Cache["TotalCounterValueLabel"] = TotalCounterValueLabel.Text;
+			Cache["TotawdawlCounterValueLabel"] = TotalCounterValueLabel.Text;
 		}
 
 		private void GameTimeCounterComponent_TextChanged(object sender, EventArgs e)
@@ -276,34 +284,11 @@ namespace LiveSplit.UI.Components
 			{
 				sum += Counters[i].Count;
 			}
-			if (CounterNameLabel != null)
-			{
-				if (state.CurrentSplit != null)
-				{
-					CounterNameLabel.Text = state.CurrentSplit.Name + ":";
-				}
-				else
-				{
-					CounterNameLabel.Text = state.Run.First().Name + ":";
-				}
-			}
+			
 
-			if (CounterValueLabel != null)
-			{
-				if (state.CurrentSplitIndex < 0 || state.CurrentSplitIndex >= Counters.Count)
-				{
-					CounterValueLabel.Text = "0";
-				}
-				else
-				{
-					CounterValueLabel.Text = Counters[state.CurrentSplitIndex].Count.ToString();
-				}
-			}
-
-			if (TotalCounterValueLabel != null)
-				TotalCounterValueLabel.Text = sum.ToString(); //TODO: have counters for PB, store PB
-			if (TotalCounterNameLabel != null)
-				TotalCounterNameLabel.Text = Settings.CounterText;
+			
+				
+			
 
 			TimeSpan? timeChange = null;
 			string comparison = "";
@@ -323,11 +308,14 @@ namespace LiveSplit.UI.Components
 				timeChange = new TimeSpan(0, 0, Counters[state.CurrentSplitIndex].Count - (GetAllSecondsFromTimeSpan(splitTime) - GetAllSecondsFromTimeSpan(previousSplitTime)));//LiveSplitStateHelper.GetLiveSegmentDelta(state, state.CurrentSplitIndex, comparison, TimingMethod.GameTime);
 			}
 
+			int split_delta_encs = 0;
+
 			if (timeChange != null)
 			{
 				Color color = Settings.OverrideTextColor ? Settings.CounterTextColor : state.LayoutSettings.TextColor;
-
-				if (GetAllSecondsFromTimeSpan(timeChange) == 0)
+				int timeChangeSeconds = GetAllSecondsFromTimeSpan(timeChange);
+				split_delta_encs = timeChangeSeconds;
+				if (split_delta_encs == 0)
 				{
 				}
 				else if (Counters[state.CurrentSplitIndex].Count < GetAllSecondsFromTimeSpan(state.Run[state.CurrentSplitIndex].BestSegmentTime.GameTime))
@@ -366,15 +354,19 @@ namespace LiveSplit.UI.Components
 				timeChange = new TimeSpan(0, 0, sum - GetAllSecondsFromTimeSpan(splitTime));//LiveSplitStateHelper.GetLiveSegmentDelta(state, state.CurrentSplitIndex, comparison, TimingMethod.GameTime);
 			}
 
+			int total_delta_encs = 0;
+
 			if (timeChange != null)
 			{
 				Color color = Settings.OverrideTextColor ? Settings.CounterTextColor : state.LayoutSettings.TextColor;
-
-				if (GetAllSecondsFromTimeSpan(timeChange) == 0)
+				int timeChangeSeconds = GetAllSecondsFromTimeSpan(timeChange);
+				total_delta_encs = timeChangeSeconds;
+				if (timeChangeSeconds == 0)
 				{
 				}
 				else
 				{
+					
 					color = LiveSplitStateHelper.GetSplitColor(state, timeChange, state.CurrentSplitIndex, false, false, comparison, TimingMethod.GameTime).Value;
 				}
 
@@ -391,6 +383,57 @@ namespace LiveSplit.UI.Components
 					Redraw = true;
 
 				TotalCounterValueLabel.ForeColor = color;
+			}
+
+			
+
+			if (TotalCounterValueLabel != null)
+			{
+				string total_text = sum.ToString();
+
+				if(Settings.ShowDeltasEnabled)
+				{
+					total_text += " (" + (total_delta_encs >= 0 ? "+" : "") + total_delta_encs + ")";
+				}
+
+				TotalCounterValueLabel.Text = total_text; //TODO: have counters for PB, store PB
+			}
+	
+			if (TotalCounterNameLabel != null)
+				TotalCounterNameLabel.Text = Settings.CounterText;
+
+			if (CounterNameLabel != null)
+			{
+				if (state.CurrentSplit != null)
+				{
+					CounterNameLabel.Text = state.CurrentSplit.Name + ":";
+				}
+				else
+				{
+					CounterNameLabel.Text = state.Run.First().Name + ":";
+				}
+			}
+
+			if (CounterValueLabel != null)
+			{
+				if (state.CurrentSplitIndex < 0 || state.CurrentSplitIndex >= Counters.Count)
+				{
+					CounterValueLabel.Text = "0";
+					if (Settings.ShowDeltasEnabled)
+					{
+						CounterValueLabel.Text += " (+0)";
+					}
+				}
+				else
+				{
+					string counter_text = Counters[state.CurrentSplitIndex].Count.ToString();
+
+					if (Settings.ShowDeltasEnabled)
+					{
+						counter_text += " (" + (split_delta_encs >= 0 ? "+" : "") + split_delta_encs + ")";
+					}
+					CounterValueLabel.Text = counter_text;
+				}
 			}
 
 			Cache.Restart();
@@ -436,6 +479,7 @@ namespace LiveSplit.UI.Components
 
 		private void DrawGeneral(Graphics g, Model.LiveSplitState state, float width, float height, LayoutMode mode)
 		{
+			
 			// Set Background colour.
 			if (Settings.BackgroundColor.ToArgb() != Color.Transparent.ToArgb()
 				|| Settings.BackgroundGradient != GradientType.Plain
@@ -453,7 +497,7 @@ namespace LiveSplit.UI.Components
 
 				g.FillRectangle(gradientBrush, 0, 0, width, height);
 			}
-
+			
 			// Set Font.
 			CounterFont = Settings.OverrideCounterFont ? Settings.CounterFont : state.LayoutSettings.TextFont;
 
@@ -494,11 +538,17 @@ namespace LiveSplit.UI.Components
 			TotalCounterNameLabel.HasShadow = state.LayoutSettings.DropShadows;
 			TotalCounterNameLabel.ShadowColor = state.LayoutSettings.ShadowsColor;
 			TotalCounterNameLabel.Draw(g);
-
+			
 			// Set Counter Value Label.
 			CounterValueLabel.HorizontalAlignment = mode == LayoutMode.Horizontal ? StringAlignment.Near : StringAlignment.Near;
 			CounterValueLabel.VerticalAlignment = StringAlignment.Center;
-			CounterValueLabel.X = width / 2 - fourCharWidth;
+			CounterValueLabel.X = width / 2 - fourCharWidth / 2.0f;
+			
+			//CounterValueLabel.X = width / 2 - CounterValueLabel.ActualWidth;
+			//CounterValueLabel.ActualWidth
+			CounterValueLabel.X -= (float)(CounterValueLabel.Text.Length) * (fourCharWidth / 6.0f);
+
+
 			CounterValueLabel.Y = 0;
 			CounterValueLabel.Width = width / 2 - 10;//(width - 10);
 			CounterValueLabel.Height = height;
@@ -507,6 +557,7 @@ namespace LiveSplit.UI.Components
 			CounterValueLabel.HasShadow = state.LayoutSettings.DropShadows;
 			CounterValueLabel.ShadowColor = state.LayoutSettings.ShadowsColor;
 			CounterValueLabel.Draw(g);
+
 
 			// Set Counter Value Label.
 			TotalCounterValueLabel.HorizontalAlignment = mode == LayoutMode.Horizontal ? StringAlignment.Far : StringAlignment.Far;

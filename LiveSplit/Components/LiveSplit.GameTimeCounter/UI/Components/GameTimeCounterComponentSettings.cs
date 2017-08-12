@@ -24,6 +24,7 @@ namespace LiveSplit.UI.Components
 
 			// Set default values.
 			GlobalHotkeysEnabled = false;
+			ShowDeltasEnabled = false;
 			CounterFont = new Font("Segoe UI", 13, FontStyle.Regular, GraphicsUnit.Pixel);
 			OverrideCounterFont = false;
 			CounterTextColor = Color.FromArgb(255, 255, 255, 255);
@@ -49,6 +50,7 @@ namespace LiveSplit.UI.Components
 			numInitialValue.DataBindings.Add("Value", this, "InitialValue");
 			numIncrement.DataBindings.Add("Value", this, "Increment");
 			chkGlobalHotKeys.DataBindings.Add("Checked", this, "GlobalHotkeysEnabled", false, DataSourceUpdateMode.OnPropertyChanged);
+			chkShowDeltas.DataBindings.Add("Checked", this, "ShowDeltasEnabled", false, DataSourceUpdateMode.OnPropertyChanged);
 			chkFont.DataBindings.Add("Checked", this, "OverrideCounterFont", false, DataSourceUpdateMode.OnPropertyChanged);
 			lblFont.DataBindings.Add("Text", this, "CounterFontString", false, DataSourceUpdateMode.OnPropertyChanged);
 			chkColor.DataBindings.Add("Checked", this, "OverrideTextColor", false, DataSourceUpdateMode.OnPropertyChanged);
@@ -92,7 +94,7 @@ namespace LiveSplit.UI.Components
 		public Color CounterValueColor { get; set; }
 		public KeyOrButton DecrementKey { get; set; }
 		public bool GlobalHotkeysEnabled { get; set; }
-
+		public bool ShowDeltasEnabled { get; set; }
 		public String GradientString
 		{
 			get { return BackgroundGradient.ToString(); }
@@ -132,6 +134,7 @@ namespace LiveSplit.UI.Components
 		{
 			var element = (XmlElement)node;
 			GlobalHotkeysEnabled = SettingsHelper.ParseBool(element["GlobalHotkeysEnabled"]);
+			ShowDeltasEnabled = SettingsHelper.ParseBool(element["ShowDeltasEnabled"]);
 			CounterTextColor = SettingsHelper.ParseColor(element["CounterTextColor"]);
 			CounterValueColor = SettingsHelper.ParseColor(element["CounterValueColor"]);
 			CounterFont = SettingsHelper.GetFontFromElement(element["CounterFont"]);
@@ -193,6 +196,11 @@ namespace LiveSplit.UI.Components
 			GlobalHotkeysEnabled = chkGlobalHotKeys.Checked;
 		}
 
+		private void chkShowDeltas_CheckedChanged(object sender, EventArgs e)
+		{
+			ShowDeltasEnabled = chkShowDeltas.Checked;
+		}
+
 		private void cmbGradientType_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			btnColor1.Visible = cmbGradientType.SelectedItem.ToString() != "Plain";
@@ -229,7 +237,9 @@ namespace LiveSplit.UI.Components
 			SettingsHelper.CreateSetting(document, parent, "Increment", Increment) ^
 			SettingsHelper.CreateSetting(document, parent, "IncrementKey", IncrementKey) ^
 			SettingsHelper.CreateSetting(document, parent, "DecrementKey", DecrementKey) ^
-			SettingsHelper.CreateSetting(document, parent, "ResetKey", ResetKey);
+			SettingsHelper.CreateSetting(document, parent, "ResetKey", ResetKey) ^
+			SettingsHelper.CreateSetting(document, parent, "ShowDeltasEnabled", ShowDeltasEnabled);
+
 		}
 
 		private string FormatKey(KeyOrButton key)
@@ -403,5 +413,7 @@ namespace LiveSplit.UI.Components
 		}
 
 		#endregion Private Methods
+
+		
 	}
 }

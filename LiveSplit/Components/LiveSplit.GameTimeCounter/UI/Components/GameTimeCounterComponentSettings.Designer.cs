@@ -63,6 +63,7 @@
 			this.numInitialValue = new System.Windows.Forms.NumericUpDown();
 			this.lblIncrementValue = new System.Windows.Forms.Label();
 			this.numIncrement = new System.Windows.Forms.NumericUpDown();
+			this.chkShowDeltas = new System.Windows.Forms.CheckBox();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.tableLayoutPanel3.SuspendLayout();
@@ -332,18 +333,20 @@
 			this.tableLayoutPanel5.ColumnCount = 2;
 			this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 32.44F));
 			this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 67.56F));
-			this.tableLayoutPanel5.Controls.Add(this.groupBox3, 0, 4);
-			this.tableLayoutPanel5.Controls.Add(this.chkGlobalHotKeys, 0, 3);
+			this.tableLayoutPanel5.Controls.Add(this.groupBox3, 0, 5);
+			this.tableLayoutPanel5.Controls.Add(this.chkGlobalHotKeys, 0, 4);
 			this.tableLayoutPanel5.Controls.Add(this.label2, 0, 0);
 			this.tableLayoutPanel5.Controls.Add(this.txtCounterText, 1, 0);
 			this.tableLayoutPanel5.Controls.Add(this.label4, 0, 1);
 			this.tableLayoutPanel5.Controls.Add(this.numInitialValue, 1, 1);
 			this.tableLayoutPanel5.Controls.Add(this.lblIncrementValue, 0, 2);
 			this.tableLayoutPanel5.Controls.Add(this.numIncrement, 1, 2);
+			this.tableLayoutPanel5.Controls.Add(this.chkShowDeltas, 0, 3);
 			this.tableLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tableLayoutPanel5.Location = new System.Drawing.Point(3, 16);
 			this.tableLayoutPanel5.Name = "tableLayoutPanel5";
-			this.tableLayoutPanel5.RowCount = 5;
+			this.tableLayoutPanel5.RowCount = 6;
+			this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
 			this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
 			this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
 			this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
@@ -357,9 +360,9 @@
 			this.tableLayoutPanel5.SetColumnSpan(this.groupBox3, 2);
 			this.groupBox3.Controls.Add(this.tableLayoutPanel4);
 			this.groupBox3.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.groupBox3.Location = new System.Drawing.Point(3, 103);
+			this.groupBox3.Location = new System.Drawing.Point(3, 128);
 			this.groupBox3.Name = "groupBox3";
-			this.groupBox3.Size = new System.Drawing.Size(424, 94);
+			this.groupBox3.Size = new System.Drawing.Size(424, 69);
 			this.groupBox3.TabIndex = 41;
 			this.groupBox3.TabStop = false;
 			this.groupBox3.Text = "Hotkeys";
@@ -382,7 +385,7 @@
 			this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
 			this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
 			this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-			this.tableLayoutPanel4.Size = new System.Drawing.Size(418, 75);
+			this.tableLayoutPanel4.Size = new System.Drawing.Size(418, 50);
 			this.tableLayoutPanel4.TabIndex = 0;
 			// 
 			// txtIncrement
@@ -452,7 +455,7 @@
 			// 
 			this.chkGlobalHotKeys.AutoSize = true;
 			this.tableLayoutPanel5.SetColumnSpan(this.chkGlobalHotKeys, 2);
-			this.chkGlobalHotKeys.Location = new System.Drawing.Point(7, 78);
+			this.chkGlobalHotKeys.Location = new System.Drawing.Point(7, 103);
 			this.chkGlobalHotKeys.Margin = new System.Windows.Forms.Padding(7, 3, 3, 3);
 			this.chkGlobalHotKeys.Name = "chkGlobalHotKeys";
 			this.chkGlobalHotKeys.Size = new System.Drawing.Size(138, 17);
@@ -536,6 +539,18 @@
             0});
 			this.numIncrement.ValueChanged += new System.EventHandler(this.numIncrement_ValueChanged);
 			// 
+			// chkShowDeltas
+			// 
+			this.chkShowDeltas.AutoSize = true;
+			this.chkShowDeltas.Location = new System.Drawing.Point(7, 78);
+			this.chkShowDeltas.Margin = new System.Windows.Forms.Padding(7, 3, 3, 3);
+			this.chkShowDeltas.Name = "chkShowDeltas";
+			this.chkShowDeltas.Size = new System.Drawing.Size(86, 17);
+			this.chkShowDeltas.TabIndex = 6;
+			this.chkShowDeltas.Text = "Show Deltas";
+			this.chkShowDeltas.UseVisualStyleBackColor = true;
+			this.chkShowDeltas.CheckedChanged += new System.EventHandler(this.chkShowDeltas_CheckedChanged);
+			// 
 			// GameTimeCounterComponentSettings
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -601,5 +616,6 @@
 		private System.Windows.Forms.NumericUpDown numIncrement;
 		private System.Windows.Forms.Label label5;
 		private System.Windows.Forms.Button btnColor3;
+		private System.Windows.Forms.CheckBox chkShowDeltas;
 	}
 }
