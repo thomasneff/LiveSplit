@@ -1,5 +1,16 @@
-## LiveSplit.Counter
-A Simple counter component for LiveSplit. 
+## LiveSplit.GameTimeCounter
+This is a modification / adaptation of the LiveSplit.Counter component, which stores counter values *per split*, using the GameTime column/data in your splits. Therefore this is only applicable for games running in RealTime. You can use this for e.g. counting random encounters, deaths, ... *per split*.
+
+LiveSplit.GameTimeCounter.dll:
+Includes the main "Counter per Split" functionality. This has the same configuration as the "LiveSplit.Counter" component.
+The counter is stored inside the GameTime of your splits. Therefore, if you run a game where GameTime is used, you
+unfortunately can not use this component. You can also edit your counter values by editing in your splits editor, as you
+know if for your Real Time splits. The counter stores its values in the "Seconds" of the GameTime.
+
+Setup/Configuration:
+
+To compare the counter values (for example: random encounters per split) you just need to add a column to your splits
+which uses GameTime as the timing method. 
 
 ## Packages / Requirements
 
