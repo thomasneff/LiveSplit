@@ -221,6 +221,8 @@ namespace LiveSplit.UI.Components
 				{
 					splitTime = split.SplitTime.GameTime;
 
+
+
 					if(splitTime != null)
 					{
 						splitTimeDif = splitTime - previousSplitTime;
@@ -296,9 +298,48 @@ namespace LiveSplit.UI.Components
 			{
 				comparison = state.CurrentComparison;
 				var splitTime = state.Run[state.CurrentSplitIndex].Comparisons[comparison][TimingMethod.GameTime];
+				if(splitTime == null)
+				{
+					//if the split was skipped, we iterate backwards until we reach the start.
+					for(int idx = state.CurrentSplitIndex; idx >= 0; idx--)
+					{
+						splitTime = state.Run[idx].Comparisons[comparison][TimingMethod.GameTime];
+						if(splitTime != null)
+						{
+							break;
+						}
+					}
+
+					//if we didn't find anything, just use zero.
+					if(splitTime == null)
+					{
+						splitTime = new TimeSpan(0, 0, 0);
+					}
+				}
+				//Console.WriteLine("SplitTime: " + splitTime.Value.Seconds);
 				TimeSpan? previousSplitTime = new TimeSpan(0, 0, 0);
 				if (state.CurrentSplitIndex - 1 >= 0)
+				{
 					previousSplitTime = state.Run[state.CurrentSplitIndex - 1].Comparisons[comparison][TimingMethod.GameTime];
+					if (previousSplitTime == null)
+					{
+						//if the split was skipped, we iterate backwards until we reach the start.
+						for (int idx = state.CurrentSplitIndex - 1; idx >= 0; idx--)
+						{
+							previousSplitTime = state.Run[idx].Comparisons[comparison][TimingMethod.GameTime];
+							if (previousSplitTime != null)
+							{
+								break;
+							}
+						}
+
+						//if we didn't find anything, just use zero.
+						if (previousSplitTime == null)
+						{
+							previousSplitTime = new TimeSpan(0, 0, 0);
+						}
+					}
+				}
 
 				if(previousSplitTime == null)
 				{
@@ -306,6 +347,7 @@ namespace LiveSplit.UI.Components
 				}
 
 				timeChange = new TimeSpan(0, 0, Counters[state.CurrentSplitIndex].Count - (GetAllSecondsFromTimeSpan(splitTime) - GetAllSecondsFromTimeSpan(previousSplitTime)));//LiveSplitStateHelper.GetLiveSegmentDelta(state, state.CurrentSplitIndex, comparison, TimingMethod.GameTime);
+				
 			}
 
 			int split_delta_encs = 0;
@@ -351,6 +393,24 @@ namespace LiveSplit.UI.Components
 			{
 				comparison = state.CurrentComparison;
 				var splitTime = state.Run[state.CurrentSplitIndex].Comparisons[comparison][TimingMethod.GameTime];
+				if (splitTime == null)
+				{
+					//if the split was skipped, we iterate backwards until we reach the start.
+					for (int idx = state.CurrentSplitIndex; idx >= 0; idx--)
+					{
+						splitTime = state.Run[idx].Comparisons[comparison][TimingMethod.GameTime];
+						if (splitTime != null)
+						{
+							break;
+						}
+					}
+
+					//if we didn't find anything, just use zero.
+					if (splitTime == null)
+					{
+						splitTime = new TimeSpan(0, 0, 0);
+					}
+				}
 				timeChange = new TimeSpan(0, 0, sum - GetAllSecondsFromTimeSpan(splitTime));//LiveSplitStateHelper.GetLiveSegmentDelta(state, state.CurrentSplitIndex, comparison, TimingMethod.GameTime);
 			}
 
@@ -524,7 +584,7 @@ namespace LiveSplit.UI.Components
 			float totalCounterSpace = g.MeasureString(TotalCounterNameLabel.Text, CounterFont).Width;
 			float totalCounterEmptySpace = (width / 2) - totalCounterWidth - totalCounterSpace;
 
-			Console.WriteLine("EMPTY SPACE: " + totalCounterEmptySpace);
+			//Console.WriteLine("EMPTY SPACE: " + totalCounterEmptySpace);
 			if (totalCounterEmptySpace >= 0)
 			{
 				
@@ -677,8 +737,24 @@ namespace LiveSplit.UI.Components
 		private void State_OnSkipSplit(object sender, EventArgs e)
 		{
 			//throw new NotImplementedException();
+			int sum = Counters[state.CurrentSplitIndex - 1].Count;
+			for (int idx = state.CurrentSplitIndex - 2; idx >= 0; idx--)
+			{
+				TimeSpan? splitTime = state.Run[idx].SplitTime.GameTime;
+				if (splitTime == null)
+				{
+					continue;
+				}
 
-			state.Run[state.CurrentSplitIndex].SplitTime = default(Time);
+				sum += GetAllSecondsFromTimeSpan(splitTime);
+				break;
+			}
+
+
+			Time gametime = new Time(state.Run[state.CurrentSplitIndex - 1].SplitTime.RealTime, new TimeSpan(0, 0, sum));
+			state.Run[state.CurrentSplitIndex - 1].SplitTime = gametime;
+
+			Console.WriteLine("SKIP: " + state.Run[state.CurrentSplitIndex].SplitTime);
 		}
 
 		private void State_OnUndoSplit(object sender, EventArgs e)
