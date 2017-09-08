@@ -1,3 +1,5 @@
+Yeah I know, the code is ugly, it started as a very small thing and became more complex step by step... It should definitely be rewritten, but I don't feel like it's worth it ¯\\_(ツ)_/¯
+
 ## LiveSplit.GameTimeCounter
 This is a modification / adaptation of the LiveSplit.Counter component, which stores counter values *per split*, using the GameTime column/data in your splits. Therefore this is only applicable for games running in RealTime. You can use this for e.g. counting random encounters, deaths, ... *per split*.
 
