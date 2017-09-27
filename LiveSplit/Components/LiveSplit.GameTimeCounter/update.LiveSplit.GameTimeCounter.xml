@@ -1,4 +1,12 @@
 <updates>
+	<update version="1.7">
+		<files>
+			<file path="bin/Release/LiveSplit.GameTimeCounter.dll" status="changed" />
+		</files>
+		<changelog>
+			<change>Changed LiveSplit auto-update.</change>
+		</changelog>
+	</update>
 	<update version="1.6">
 		<files>
 			<file path="bin/Release/LiveSplit.GameTimeCounter.dll" status="changed" />
